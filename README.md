@@ -108,58 +108,77 @@ render() {
 }
 ```
 
+- This component has several errors.
+
+  - Again, you require the import and export for the component
+  - The "handleChange" method needs to be bound to "this" within the constructor
+  - There is a scoping issue with the "e.target.value;" inside of the "handleChange" method
+  - Putting "e.target.value;" within a variable I call "value" and calling "value within the setState of "search" will take care of this scoping issue
+  - When you use the timer function, it has its own event object. That event object is different from the one of handleChange()
+
 - My solution would look like this -
 
 ```
+import React from 'react';
+
 class App extends React.Component {
-state = { search: '' }
-handleChange = event => {
-/**
+  constructor() {
+    super();
+
+    this.state = { search: '' };
+
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(e) {
+    /**
      * This is a simple implementation of a "debounce" function,
      * which will queue an expression to be called in 250ms and
      * cancel any pending queued expressions. This way we can
      * delay the call 250ms after the user has stoped typing.
      */
+    let value = e.target.value;
     clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
       this.setState({
-        search: event.target.value
-      })
+        search: value
+      });
     }, 250);
   }
-render() {
+
+  render() {
     return (
       <div>
         <input type="text" onChange={this.handleChange} />
         {this.state.search ? <p>Search for: {this.state.search}</p> : null}
       </div>
-    )
+    );
   }
 }
+
+export default App;
 ```
 
-## Screenshots
+## More Questions
 
-### Landing Page:
+1. Tell me about componentWillMount and the issues with it?
 
-![image](public/images/screenshots/landing.png)
+- componentWillMount is the lifecycle method within React that occurs before the initial render of a component. It is also used to check props and state.
 
-### Login Page:
+- The issue is that componentWillMount is no longer used and has been deprecated. Using a fetch call within componentDidMount will essentially render with no data initially because it does not return before the first render
 
-![image](public/images/screenshots/login.png)
+- You should use the componentDidMount lifecycle method instead to fetch data
 
-### Band Page:
+2. Can you walk me through the cycle of mounting a stateful component? What functions are called in what order? Where would you place a request for data from the API? Why?
 
-![image](public/images/screenshots/band.png)
+- Initially the component would go through the "constructor" phase which one runs once at the beginning of the cycle. There it will set the initial state.
 
-### Watch Page:
+- Next, you would go through the getDerivedStateFromProps cycle. This method gets the derived state from the change in props. This lifecycle returns newState or null.
 
-![image](public/images/screenshots/watch.png)
+- Next, you would go through the render cycle. This is where you return your JSX. This is the only mandatory method within React.
 
-### Listen Page:
+- Next, you would have the componentDidMount cycle which will run after the DOM has completed the previous methods. You want your fetch calls to the server to happen within this stage, after the component has fully rendered.
 
-![image](public/images/screenshots/listen.png)
+- Next, you would have the re-render stage where shouldComponentUpdate will be ran. Here it is determined whether a re-render should happen based on state.
 
-### Shows Page:
-
-![image](public/images/screenshots/shows.png)
+- Lastly, you have the componentDidUpdate method which completes the mounting of the component.
