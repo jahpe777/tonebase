@@ -56,7 +56,7 @@ class App extends React.Component {
 
 - In this case with "props" you are not passing down any type of state since you are at the parent component of "App". There is currently no initial state being set so the return of "Hello {this.state.name}" will not be able to retrieve any kind of state.
 
-- My example would look like this -
+- My solution would look like this -
 
 ```
 import React from 'react';

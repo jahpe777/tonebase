@@ -19,7 +19,7 @@ class App extends React.Component {
           this.setState({
             search: event.target.value
           });
-        }, 1000);
+        }, 250);
       }
     };
   }
@@ -27,7 +27,7 @@ class App extends React.Component {
     return (
       <div>
         <input type="text" onChange={this.handleChange} />
-        {this.state.search ? <p>Search for: {this.state.search}</p> : null}
+        {this.state.search ? <p>Search for: {this.state.search}</p> : ''}
       </div>
     );
   }
