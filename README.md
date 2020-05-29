@@ -12,7 +12,7 @@ https://www.tonebase.co/
 
 2. Why do the component names in JSX start with capital letters?
 
-- JSX reads a component with lowercase letters as a built-in element such as a <div>. This is the way JSX works, by rendering a component that begins with a lowercase letter as an element. If you start the component name with a capital letter, JSX will see it as a true component.
+- JSX reads a component with lowercase letters as a built-in element such as a "div". This is the way JSX works, by rendering a component that begins with a lowercase letter as an element. If you start the component name with a capital letter, JSX will see it as a true component.
 
 3. What are the main types of components you can render in React? When do you choose one over the other?
 
@@ -26,21 +26,35 @@ https://www.tonebase.co/
 
 - I have expereince testing within both React and Node.
 
-- Within React I would simply have some "smoke" tests that simply test whether or not certain components render properly.
+- Within React, I would simply have some "smoke" tests that simply test whether or not certain components render properly.
 
-- Within Node you would have more elebarote tests using the Mocha framework and the Chai library. These tests would ensure that your CRUD (Create, Read, Update, Delete) operations on the backend function properly. Examples of this would be testing whether or not a POST endpoint actually receives the users input and whether or not it is in the correct format.
+- Within Node, you would have more elebarote tests using the Mocha framework and the Chai library. These tests would ensure that your CRUD (Create, Read, Update, Delete) operations on the backend function properly. Examples of this would be testing whether or not a POST endpoint actually receives the users input and whether or not it is in the correct format.
 
 ## Coding Questions
 
 1. What is wrong with this example, and how would you go about fixing or improving the component?
 
-- First of all, I do not see the import for this component. You must declare an import such as -
-  import React, { Component } from 'react';
+```
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: this.props.name || 'Anonymous'
+    }
+  }
+  render() {
+    return (
+      <p>Hello {this.state.name}</p>
+    );
+  }
+}
+```
 
-- You must export the component as well to index.js so it can be rendered.
-  export default App;
+- First of all, I do not see the import for this component. You must declare an import such as - "import React from 'react';"
 
-- In this case with "props" you are not passing down any type of state since you are at the parent component of "App". There is currently no initial state being set so the return of "<p>Hello {this.state.name}</p>;" will not be able to retrieve any kind of state.
+- You must export the component as well to index.js so it can be rendered. "export default App;"
+
+- In this case with "props" you are not passing down any type of state since you are at the parent component of "App". There is currently no initial state being set so the return of "Hello {this.state.name}" will not be able to retrieve any kind of state.
 
 - My example would look like this -
 
@@ -58,13 +72,43 @@ class App extends React.Component {
     return <p>Hello {this.state.name}</p>;
   }
 }
-```
 
 export default App;
+```
 
 - This way you're able to properly import and export the component while setting an initial state within App. You can then pass down props for the "name" state to other child components if they require the state from App.
 
 2. What's the issue with this component. Why? How would you go about fixing it?
+
+```
+class App extends React.Component {
+state = { search: '' }
+handleChange = event => {
+/**
+     * This is a simple implementation of a "debounce" function,
+     * which will queue an expression to be called in 250ms and
+     * cancel any pending queued expressions. This way we can
+     * delay the call 250ms after the user has stoped typing.
+     */
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(() => {
+      this.setState({
+        search: event.target.value
+      })
+    }, 250);
+  }
+render() {
+    return (
+      <div>
+        <input type="text" onChange={this.handleChange} />
+        {this.state.search ? <p>Search for: {this.state.search}</p> : null}
+      </div>
+    )
+  }
+}
+```
+
+- My solution would look like this -
 
 ```
 class App extends React.Component {
